@@ -1,0 +1,158 @@
+{
+  // ~/.config/zed/settings.json
+
+  // 1. Disable unwanted stuff
+  "title_bar": {
+    "show_sign_in": false,
+    "show_user_picture": false,
+    "show_branch_status_icon": false,
+  },
+  "collaboration_panel": {
+    "dock": "left",
+    "button": false,
+  },
+  "tab_bar": {
+    "show_tab_bar_buttons": false,
+    "show_nav_history_buttons": false,
+  },
+  "preview_tabs": {
+    "enabled": false,
+  },
+  "debugger": {
+    "button": false,
+  },
+  "search": {
+    "button": false,
+  },
+  "terminal": {
+    "button": false,
+  },
+  "inlay_hints": {
+    "enabled": false,
+  },
+  "scrollbar": {
+    "show": "never",
+  },
+  "status_bar": {
+    "active_language_button": false,
+    "show_active_file": false,
+    "cursor_position_button": false,
+  },
+  "toolbar": {
+    "agent_review": false,
+    "quick_actions": false,
+    "breadcrumbs": false,
+  },
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false,
+  },
+  "session": {
+    "trust_all_worktrees": false,
+  },
+
+  // 2. UI Settings
+  "theme": "One Dark",  // "One Dark", "Kanagawa"
+  "ui_font_size": 20,
+  "cursor_shape": "bar",
+  "buffer_font_family": "Fira Code",  // sudo pacman -S ttf-fira-code
+  "buffer_font_weight": 350,
+  "buffer_font_size": 20,
+  "buffer_line_height": {
+    "custom": 1.6,
+  },
+  "tabs": {
+    "file_icons": true,
+    "git_status": true,
+  },
+
+  // 3. UX Settings
+  "fast_scroll_sensitivity": 7.5,
+  "vertical_scroll_margin": 5.0,
+  "autosave": {
+    "after_delay": {
+      "milliseconds": 1000,
+    },
+  },
+  "vim_mode": true,
+  "vim": {
+    "toggle_relative_line_numbers": true,
+  },
+  "mouse_wheel_zoom": false,
+  "scroll_sensitivity": 5.0,
+  "gutter": {
+    "folds": false, // Hides code folding arrows
+    "runnables": false, // Hides "Run" buttons next to tests/main functions
+    "breakpoints": false, // Hides the breakpoint margin
+    "min_line_number_digits": 1, // default=4
+  },
+
+  // 4. Panels(Only want Project, Git and Agent Panels)
+  "outline_panel": {
+    "dock": "left",
+    "button": false,
+  },
+  "project_panel": {
+    "indent_size": 24.0,
+    "hide_root": true,
+    "hide_gitignore": false,
+    "button": true,
+    "dock": "left",
+  },
+  "git_panel": {
+    "dock": "left",
+    "default_width": 400,
+    "tree_view": true,
+    "file_icons": true,
+  },
+
+  // 5. LSPs
+  "languages": {
+    "Python": {
+      "language_servers": ["ruff", "pyright"],
+      "prettier": {
+        // "allowed": false,
+      },
+      "format_on_save": "on",
+      "formatter": {
+        "language_server": {
+          "name": "ruff",
+        },
+      },
+    },
+  },
+
+  // 6. Agentic Dev Setup
+  "agent": {
+    "default_model": {
+      "provider": "openai-subscribed",
+      "model": "gpt-5.3-codex",
+      "enable_thinking": true,
+      "effort": "high",
+    },
+    "sidebar_side": "right",
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": [],
+  },
+
+  // 6.1) Configure your local LLMs under the centralized language_models block
+  "language_models": {
+    // Ollama as Copilot/Autocomplete agent
+    "ollama": {
+      "api_url": "http://localhost:11434",
+    },
+  },
+
+  // 6.2) Configure the new dedicated inline Edit Predictions block for Ollama
+  "edit_predictions": {
+    "provider": "ollama",
+    "mode": "eager",
+    "ollama": {
+      "api_url": "http://localhost:11434",
+      "model": "qwen2.5-coder:3b",
+      "prompt_format": "infer",
+      "max_output_tokens": 64,
+    },
+  },
+}
