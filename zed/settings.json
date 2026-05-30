@@ -1,7 +1,7 @@
+// ~/.config/zed/settings.json
 {
-  // ~/.config/zed/settings.json
-
   // 1. Disable unwanted stuff
+  "auto_update": false,
   "title_bar": {
     "show_sign_in": false,
     "show_user_picture": false,
@@ -52,14 +52,18 @@
   },
 
   // 2. UI Settings
-  "theme": "One Dark",  // "One Dark", "Kanagawa"
-  "ui_font_size": 20,
+  "theme": "Tokyo Night",
+  "ui_font_size": 24.75,
+  "ui_font_family": ".ZedMono",
   "cursor_shape": "bar",
-  "buffer_font_family": "Fira Code",  // sudo pacman -S ttf-fira-code
-  "buffer_font_weight": 350,
-  "buffer_font_size": 20,
+  // Fonts For Python development:
+  "buffer_font_family": "JetBrainsMono Nerd Font Mono",
+  //// Fonts For Rust development:
+  // "buffer_font_family": "Fira Mono",
+  // "buffer_font_weight": 500,
+  "buffer_font_size": 25.25,
   "buffer_line_height": {
-    "custom": 1.6,
+    "custom": 1.5,
   },
   "tabs": {
     "file_icons": true,
@@ -100,7 +104,7 @@
     "dock": "left",
   },
   "git_panel": {
-    "dock": "left",
+    "dock": "right",
     "default_width": 400,
     "tree_view": true,
     "file_icons": true,
@@ -111,7 +115,7 @@
     "Python": {
       "language_servers": ["ruff", "pyright"],
       "prettier": {
-        // "allowed": false,
+        "allowed": true,
       },
       "format_on_save": "on",
       "formatter": {
@@ -156,3 +160,4 @@
     },
   },
 }
+
