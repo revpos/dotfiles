@@ -1,0 +1,15 @@
+[ ] System setup: Wi-Fi, Bluetooth, Input(keys/mouse), Animations, Theme, Desktop/Shell blur
+[ ] Wallpapers: git clone https://github.com/revpos/walls
+[ ] Theme: Tokyo Night + Catppuccin Mocha + Gruvbox + Nord
+[ ] Fonts: SF Pro(Sans), New York(Serif), Menlo/ttf-meslo-nerd, ttf-jetbrainsmono-nerd, hack (~/.local/share/fonts/*)
+[ ] Keyboard Shortcuts: Close Window, Full Screen, Shutdown, Browser, Terminal
+[ ] PackagesToInstall: neovim, tmux, lazygit, lazydocker, vscodium, zen-browser-bin
+[ ] Browser: Google setup, uBlock Origin, zen workspaces, bookmark articles/blogs
+[ ] Shell: Fish / Zsh+OhMyZsh (~/.config/fish/* OR ~/.config/zsh/*)
+[ ] Terminal: Alacritty with themes (~/.config/alacritty/*)
+[ ] VCS: Git with GPG signing, SSH integration, Aliases (~/.config/git/*)
+[ ] IDE: neovim ~ kickstart.nvim/lazyvim (~/.config/nvim/*)
+[ ] IDE2: vscodium for Markdown, gitGraph and Jupyter Notebook stuff
+[ ] Tmux: tmux -u(~/.config/tmux/*) (-u aka with UTF-8 support) for QoL/flow state dev workspaces :)
+[ ] Languages: Python, Go, Rust, Typescript
+[ ] Services: docker(ubuntu, postgresql, mongodb, nginx)
