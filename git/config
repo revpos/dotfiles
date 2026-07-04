@@ -1,0 +1,47 @@
+[user]
+    email = revanthmadupoju@gmail.com
+    name = Revanth Madupoju
+    signingkey = ~/.ssh/id_ed25519.pub
+[core]
+    editor = "vim"
+[init]
+    defaultBranch = "main"
+[pull]
+    rebase = true 			 # Rebase (instead of merge) on pull
+
+[push]
+    autoSetupRemote = true   # Automatically set upstream branch on push
+
+[diff]
+    algorithm = histogram    # Clearer diffs on moved/edited lines
+    colorMoved = plain       # Highlight moved blocks in diffs
+    mnemonicPrefix = true    # More intuitive refs in diff output
+
+[commit]
+    verbose = true           # Include diff comment in commit message template
+
+[column]
+    ui = auto                # Output in columns when possible
+
+[branch]
+    sort = -committerdate    # Sort branches by most recent commit first
+
+[log]
+    date = iso
+
+[gpg]
+    format = ssh
+
+[alias]
+    st = "status --short"
+    lg = "log --oneline --graph --decorate --all"
+
+    # Uncommits the last commit, leaves files STAGED (ready to commit again)
+    undo = reset --soft HEAD~1
+
+    # Undo the last commit, leaves files UNSTAGED (wipes the staging area)
+    unstage = reset HEAD~1
+
+    ; amend = commit --amend --no-edit
+    ; please = push --force-with-lease
+    ; oops   = commit --amend

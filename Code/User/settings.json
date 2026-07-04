@@ -1,0 +1,84 @@
+{
+  "window.customTitleBarVisibility": "windowed",
+  "workbench.startupEditor": "none",
+  // "editor.fontFamily": "'SauceCodePro Nerd Font', 'Source Code Pro', monospace",
+  "editor.fontFamily": "MesloLGM Nerd Font Mono",
+  // "editor.fontSize": 13.75,
+  // "terminal.integrated.fontSize": 13.75,
+  "workbench.sideBar.experimental.fontSize": 13.75,
+  // "markdown.preview.fontSize": 13.75,
+  "markdown-mermaid.darkModeTheme": "default",
+  "[markdown]": {
+    "editor.unicodeHighlight.ambiguousCharacters": false,
+    "editor.unicodeHighlight.invisibleCharacters": false,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off",
+    },
+  },
+  "files.autoSave": "afterDelay",
+  // "editor.rulers": [
+  //     88
+  // ],
+  // "editor.wordWrap": "off",
+  "workbench.activityBar.compact": true,
+  "git.confirmSync": false,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+  },
+  "git.suggestSmartCommit": false,
+  "git.ignoreRebaseWarning": true,
+  "catppuccin.italicKeywords": false,
+  "window.confirmSaveUntitledWorkspace": false,
+  "editor.minimap.enabled": false,
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "/usr/bin/bash",
+    },
+    "zsh": {
+      "path": "/usr/bin/zsh",
+    },
+  },
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "editor.formatOnSave": true,
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "window.zoomLevel": 1.9,
+  "workbench.editor.enablePreview": false,
+  "breadcrumbs.enabled": false,
+  "workbench.colorTheme": "Dark Modern",
+  "editor.tokenColorCustomizations": {
+    "[Tokyo Night]": {
+      // or "[Tokyo Night Storm]"
+      "textMateRules": [
+        {
+          "scope": [
+            "comment",
+            "meta.var.expr storage.type",
+            "keyword.control.flow",
+            "keyword.control.return",
+            "meta.directive.vue punctuation.separator.key-value.html",
+            "meta.directive.vue entity.other.attribute-name.html",
+            "tag.decorator.js entity.name.tag.js",
+            "tag.decorator.js punctuation.definition.tag.js",
+            "storage.modifier",
+          ],
+          "settings": {
+            "fontStyle": "",
+          },
+        },
+      ],
+    },
+  },
+  "vsicons.dontShowNewVersionMessage": true,
+}

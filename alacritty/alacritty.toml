@@ -1,0 +1,47 @@
+[env]
+TERM = "xterm-256color"
+LANG = "en_US.UTF-8"
+LC_ALL = "en_US.UTF-8"
+
+[terminal.shell]
+program = "/bin/bash"
+# args = ["--login"]
+
+[general]
+import = [
+	"~/.config/alacritty/themes/tokyo_night.toml"
+]
+# working_directory = "/home/rev/revpos/"
+
+[font]
+
+# normal = { family = "SauceCodePro Nerd Font", style = "Medium" }
+# bold = { family = "SauceCodePro Nerd Font", style = "Bold" }
+# italic = { family = "SauceCodePro Nerd Font", style = "Italic" }
+# bold_italic = { family = "SauceCodePro Nerd Font", style = "Bold Italic" }
+
+# normal = { family = "Hack", style = "Regular" }
+# bold = { family = "Hack", style = "Bold" }
+# italic = { family = "Hack", style = "Italic" }
+# bold_italic = { family = "Hack", style = "Bold Italic" }
+
+# normal = { family = "JetbrainsMono Nerd Font Mono", style = "Medium" }
+# bold = { family = "JetbrainsMono Nerd Font Mono", style = "Bold" }
+# italic = { family = "JetbrainsMono Nerd Font Mono", style = "Italic" }
+# bold_italic = { family = "JetbrainsMono Nerd Font Mono", style = "Bold Italic" }
+
+normal = { family = "MesloLGMDZ Nerd Font", style = "Medium" }
+bold = { family = "MesloLGMDZ Nerd Font", style = "Bold" }
+italic = { family = "MesloLGMDZ Nerd Font", style = "Italic" }
+bold_italic = { family = "MesloLGMDZ Nerd Font", style = "Bold Italic" }
+size = 13
+
+[font.offset]
+x = 0
+y = 0
+
+[window]
+decorations = "None"
+# dynamic_padding = true
+# resize_increments = true
+padding = { x = 0, y = 0 }
