@@ -1,0 +1,31 @@
+<type>(<scope>): <short summary in present tense>
+
+# --- COMMIT GUIDELINES ---
+# Capitalized, short (50 chars or less) summary. No period.
+#
+# Type should be one of the following:
+#   feat     ✨ : A new feature
+#   fix      🐛 : A bug fix
+#   docs     📝 : Documentation only changes
+#   style    💅 : Changes that don't affect code meaning (whitespace, formatting)
+#   refactor ♻️  : A code change that neither fixes a bug nor adds a feature
+#   perf     ⚡️ : A code change that improves performance
+#   test     ✅ : Adding missing tests or correcting existing tests
+#   build    📦 : Changes affecting the build system or external dependencies
+#   ci       🦊 : Changes to CI configuration files and scripts
+#   chore    🔧 : Other changes that don't modify src or test files
+#   revert   ⏪ : Reverts a previous commit
+# -------------------------
+# Write a detailed description if necessary.
+# - Use the imperative, present tense ("change", not "changed" or "changes")
+# - Wrap lines at 72 characters.
+# - Focus on the *why* and *what*, rather than the *how* (the diff shows how).
+# Leave a blank line before the body, and another before the footer.
+
+# --- FOOTER / REFERENCES ---
+# Enter issue tracker IDs, breaking changes, or co-authors here.
+# Examples:
+#   Fixes: #123
+#   See-also: #456
+#   BREAKING CHANGE: The interface for X has changed significantly.
+#   Co-authored-by: Name <email>
