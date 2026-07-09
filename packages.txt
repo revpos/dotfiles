@@ -2,7 +2,8 @@
 adwaita-cursors
 cachyos-firefox-settings
 cachyos-lavender-kde-theme-git
-cachyos-themes-sddm etcher-bin
+cachyos-themes-sddm
+etcher-bin
 github-cli
 intellij-idea-community-edition
 neovim
