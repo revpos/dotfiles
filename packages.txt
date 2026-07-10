@@ -29,5 +29,5 @@ tmux
 typescript
 uv
 vscodium
-yay-bin
+yay
 zen-browser-bin
