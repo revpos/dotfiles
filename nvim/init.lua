@@ -135,7 +135,8 @@ do
   vim.o.smartcase = true
 
   -- Keep signcolumn on by default
-  vim.o.signcolumn = 'yes'
+  vim.o.signcolumn = 'yes:1'
+  -- vim.o.signcolumn = 'number'
 
   -- Decrease update time
   vim.o.updatetime = 250
@@ -177,6 +178,7 @@ do
   vim.o.tabstop = 4
   vim.o.shiftwidth = 4
   vim.o.wrap = false
+  vim.opt.numberwidth = 2
 end
 
 -- ============================================================
@@ -257,6 +259,9 @@ do
     group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
     callback = function() vim.hl.on_yank() end,
   })
+
+  -- NOTE: custom keyboard shortcut to close current active buffer smoothly
+  vim.keymap.set('n', '<leader>bd', '<cmd>bprevious | bdelete #<CR>', { desc = '[B]uffer [D]elete' })
 end
 
 -- ============================================================
@@ -400,30 +405,24 @@ do
 
   -- NOTE: my custom colorscheme downloads
   -- 1. Catppuccin
-  vim.pack.add { { src = "https://github.com/catppuccin/nvim", name = "catppuccin" } }
-
-  -- 2. Rose Pine
-  vim.pack.add({
-    {
-      src = "https://github.com/rose-pine/neovim",
-      name = "rose-pine",
-    },
-  })
-  require("rose-pine").setup {
-    styles = {
-      comments = { italic = false }, -- Disable italics in comments
-      types = { italic = false },
-      keywords = { bold = true, italic = false },
-    },
-  }
-  -- vim.cmd("colorscheme rose-pine")
+  vim.pack.add { { src = 'https://github.com/catppuccin/nvim', name = 'catppuccin' } }
+  -- 2. NordFox
+  vim.pack.add { { src = 'https://github.com/EdenEast/nightfox.nvim', name = 'nightfox' } }
 
   -- Load the colorscheme here.
   -- Like many other themes, this one has different styles, and you could load
   -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
   -- vim.cmd.colorscheme 'tokyonight-night'
-  vim.cmd.colorscheme 'catppuccin-mocha'
-  -- vim.cmd.colorscheme 'rose-pine'
+  -- vim.cmd.colorscheme 'catppuccin-mocha'
+  vim.cmd.colorscheme 'nordfox'
+  -- vim.cmd.colorscheme 'retrobox'
+  -- vim.cmd.colorscheme 'habamax'
+
+  -- Make background transparent
+  vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
+  vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
+  vim.api.nvim_set_hl(0, 'FloatBorder', { bg = 'none' })
+  vim.api.nvim_set_hl(0, 'SignColumn', { bg = 'none' })
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
@@ -723,16 +722,32 @@ do
   ---@type table<string, vim.lsp.Config>
   local servers = {
     clangd = {},
-    gopls = {},
-    pyright = {},
+    -- gopls = {},
+    -- pyright = {},
     ruff = {},
-    rust_analyzer = {},
+    -- rust_analyzer = {},
     --
     -- Some languages (like typescript) have entire language plugins that can be useful:
     --    https://github.com/pmizio/typescript-tools.nvim
     --
     -- But for many setups, the LSP (`ts_ls`) will work just fine
-    ts_ls = {},
+    -- ts_ls = {},
+    vtsls = {},
+    tailwindcss = {},
+
+    -- Configuration using typescript-language-server
+    -- require('lspconfig').ts_ls.setup({
+    --   filetypes = {
+    --     "javascript",
+    --     "javascriptreact",
+    --     "javascript.jsx",
+    --     "typescript",
+    --     "typescriptreact",
+    --     "typescript.tsx"
+    --   },
+    --   -- Ensures it starts in the directory containing package.json or tsconfig.json
+    --   root_dir = require('lspconfig').util.root_pattern("package.json", "tsconfig.json", ".git"),
+    -- });
 
     stylua = {}, -- Used to format Lua code
 
@@ -791,6 +806,8 @@ do
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
     -- You can add other tools here that you want Mason to install
+    pyright,
+    ruff,
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -814,7 +831,9 @@ do
       -- You can specify filetypes to autoformat on save here:
       local enabled_filetypes = {
         -- lua = true,
-        -- python = true,
+        python = true,
+        javascript = true,
+        typescript = true
       }
       if enabled_filetypes[vim.bo[bufnr].filetype] then
         return { timeout_ms = 500 }
@@ -832,7 +851,7 @@ do
       -- python = { "isort", "black" },
       --
       -- You can use 'stop_after_first' to run the first available formatter from the list
-      -- javascript = { "prettierd", "prettier", stop_after_first = true },
+      javascript = { "prettierd", "prettier", stop_after_first = true },
     },
   }
 
@@ -941,16 +960,19 @@ do
     'diff',
     'html',
     'css',
+    'json',
     'lua',
     'luadoc',
     'markdown',
     'markdown_inline',
-    'query',
     'vim',
-    'vimdoc',
     'python',
     'go',
     'rust',
+    'javascript',
+    'jsx',
+    'typescript',
+    'tsx'
   }
   require('nvim-treesitter').install(parsers)
 
