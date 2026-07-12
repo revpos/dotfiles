@@ -4,8 +4,6 @@ cachyos-firefox-settings
 cachyos-lavender-kde-theme-git
 cachyos-themes-sddm
 etcher-bin
-github-cli
-intellij-idea-community-edition
 neovim
 lazygit
 lazydocker
