@@ -114,25 +114,35 @@ mkproj() {
 
 
 # --- Better prompt, efficient & Prod-ready prompt by Claude---
-__git_branch_info() {
-  git rev-parse --git-dir > /dev/null 2>&1 || return
-  local branch
-  branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || return
-  local display=":${branch}"
-  [ "$branch" = "HEAD" ] && display=":detached@$(git rev-parse --short HEAD 2>/dev/null)"
-  git diff --quiet 2>/dev/null || display="${display}*"
-  echo "$display"
-}
+# __git_branch_info() {
+#   git rev-parse --git-dir > /dev/null 2>&1 || return
+#   local branch
+#   branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || return
+#   local display=":${branch}"
+#   [ "$branch" = "HEAD" ] && display=":detached@$(git rev-parse --short HEAD 2>/dev/null)"
+#   git diff --quiet 2>/dev/null || display="${display}*"
+#   echo "$display"
+# }
 
 # Added Git branch highlight with 256-color orange (most accurate to Git logo / Alacritty orange)
 # PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[38;5;202m\]$(__git_branch_info)\[\033[00m\] \$ '
 
 # Custom git branch orange color highlight, for 256 color support
-PS1='\[\033[01;34m\]\w\[\033[38;5;202m\]$(__git_branch_info)\[\033[00m\] \$ '
+# PS1='\[\033[01;34m\]\w\[\033[38;5;202m\]$(__git_branch_info)\[\033[00m\] \$ '
 
 # Default alacritty blue for pwd and red for git branch
 # PS1='\[\033[01;34m\]\w\[\033[91m\]$(__git_branch_info)\[\033[00m\] \$ '
 
+# # === Bash Shell Prompts(Short & Long) created from bash-prompt-generator.org ===
+. ~/.git-prompt.sh
+
+# # Full Shell Prompt
+# PROMPT_COMMAND='PS1_CMD1=$(__git_ps1 " (%s)")';
+# PS1='\n\[\e[32;1m\]\u\[\e[0;2m\]@\[\e[0;32;1m\]\h\[\e[0;2m\]:\[\e[0;94m\]\w\[\e[31m\]${PS1_CMD1}\[\e[0m\] \$\[\033[00m\] '
+
+# Short Shell Prompt
+PROMPT_COMMAND='PS1_CMD1=$(__git_ps1 " (%s)")';
+PS1='\[\e[94;1m\]\w\[\e[0;31m\]${PS1_CMD1}\[\e[0m\] \$\[\033[00m\] '
 
 # # === Git Stash Cyberpunk Prompt ===
 # # Add to ~/.bashrc or ~/.bash_profile
