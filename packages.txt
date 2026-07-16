@@ -1,8 +1,10 @@
 7zip
+alacritty
 eza
 fd
 gcc
 git
+go
 neovim
 lazygit
 lazydocker
