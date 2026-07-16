@@ -1,7 +1,7 @@
 [user]
     email = revanthmadupoju@gmail.com
     name = Revanth Madupoju
-    signingkey = F965D6942415DB49
+    # signingkey = F965D6942415DB49
 
 [init]
     defaultBranch = main
@@ -17,10 +17,10 @@
 
 [commit]
     verbose = true           # Include diff comment in commit message template
-    gpgsign = true
+    # gpgsign = true
 
 [gpg]
-    format = ssh
+    # format = ssh
 
 [color]
     ui = auto
@@ -49,7 +49,6 @@
     colorMoved = plain       # Highlight moved blocks in diffs
     mnemonicPrefix = true    # More intuitive refs in diff output
     renames = true
-
 
 [column]
     ui = auto                # Output in columns when possible
