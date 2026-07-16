@@ -477,6 +477,22 @@ do
 
   -- ... and there is more!
   --  Check out: https://github.com/nvim-mini/mini.nvim
+
+  -- NOTE: Undotree installed as a core plugin
+  -- 1. Download and source the plugin via vim.pack
+  vim.pack.add { gh 'mbbill/undotree' }
+
+  -- 2. Configure Undotree using vim globals (instead of require().setup)
+  vim.g.undotree_WindowLayout = 2          -- Optional: Change layout
+  vim.g.undotree_SetFocusWhenToggle = 1     -- Optional: Focus window on open
+
+  -- 3. Set up the toggle keymap
+  vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle, { desc = 'Toggle [U]ndotree' })
+
+  -- 4. Enable persistent undo (Crucial for undotree to work over time)
+  vim.opt.undofile = true
+  vim.opt.undodir = vim.fn.stdpath 'data' .. '/undo'
+
 end
 
 -- ============================================================
