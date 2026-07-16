@@ -53,7 +53,7 @@ for file in "${HOME_FILES[@]}"; do
 done
 
 echo "📂 Step 5: Syncing standard .config directories..."
-CONFIG_FOLDERS=(alacritty Code ghostty git kitty starship tmux)
+CONFIG_FOLDERS=(alacritty ghostty git kitty starship tmux)
 for folder in "${CONFIG_FOLDERS[@]}"; do
     if [ -d "$DOTFILES_DIR/$folder" ]; then
         echo " -> Copying $folder to $CONFIG_DIR/"
