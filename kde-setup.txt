@@ -1,0 +1,18 @@
+[ ] System setup: Wi-Fi, Bluetooth, Input(keys/mouse)
+[ ] Keybindings: Terminal, Browser, Close Window, Full Screen Window, Shutdown Prompt
+[ ] Animations: Magic lamp/Genie for Minimize
+[ ] Cursor: sudo pacman -S adwaita-cursors
+[ ] Wallpapers: git clone https://github.com/revpos/walls
+[ ] Theme: Tokyo Night + Catppuccin Mocha + Gruvbox Hard + Nord
+[ ] Fonts:
+    - [ ] System UI Fonts: SF Pro(Sans), New York(Serif)
+    - [ ] Programming Fonts: ttf-meslo-nerd, ttf-jetbrainsmono-nerd
+[ ] Browser: Google setup, uBlock Origin, zen workspaces, bookmark articles/blogs
+[ ] Shell: fish(kitty) / bash(alacritty)
+[ ] Terminal: Alacritty + Themes (~/.config/alacritty/{alacritty.toml,themes/}) + Tmux (Occasionally)
+[ ] VCS: Git with GPG signing, SSH integration, Aliases (~/.config/git/*)
+[ ] IDE: Neovim + kickstart.nvim/lazyvim (~/.config/nvim/*)
+[ ] IDE2: VSCodium for Markdown, gitGraph and Jupyter Notebook stuff
+[ ] Tmux: tmux -2u (~/.config/tmux/*)
+[ ] Languages: Python, Typescript, Go, Rust
+[ ] Containerization Services: docker(ubuntu, postgresql, mongodb, nginx), podman
