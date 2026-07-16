@@ -1,6 +1,4 @@
 7zip
-cachyos-lavender-kde-theme-git
-cachyos-themes-sddm
 eza
 fd
 gcc
@@ -14,7 +12,6 @@ python-pip
 ripgrep
 tree
 tree-sitter-cli
-tree-sitter-python
 ttf-jetbrains-mono-nerd
 ttf-meslo-nerd
 ttf-sourcecodepro-nerd
@@ -22,5 +19,5 @@ tmux
 unzip
 uv
 vscodium-bin
-yay
+yay-bin
 zen-browser-bin
