@@ -78,18 +78,18 @@ else
     echo " -> ⚠️ Warning: ~/dotfiles/nvim/init.lua not found!"
 fi
 
-echo "📦 Step 7: Installing bulk packages from packages.txt..."
-PACKAGES_FILE="$DOTFILES_DIR/packages.txt"
+echo "📦 Step 7: Installing bulk packages from archpkgs.txt..."
+PACKAGES_FILE="$DOTFILES_DIR/archpkgs.txt"
 if [ -f "$PACKAGES_FILE" ]; then
-    # Safely strip out comments (#) and blank lines from packages.txt to prevent parser crashes
+    # Safely strip out comments (#) and blank lines from archpkgs.txt to prevent parser crashes
     PKGS=$(sed '/^#/d; /^$/d' "$PACKAGES_FILE")
     if [ -n "$PKGS" ]; then
         yay -S --needed --noconfirm $PKGS
     else
-        echo " -> ⚠️ packages.txt is empty."
+        echo " -> ⚠️ archpkgs.txt is empty."
     fi
 else
-    echo " -> ⚠️ Warning: packages.txt not found! Skipping package installation."
+    echo " -> ⚠️ Warning: archpkgs.txt not found! Skipping package installation."
 fi
 
 echo "🖼️  Step 8: Syncing Wallpapers..."
