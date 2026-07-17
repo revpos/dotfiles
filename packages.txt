@@ -5,6 +5,7 @@ fd
 gcc
 git
 go
+inter-font
 neovim
 lazygit
 lazydocker

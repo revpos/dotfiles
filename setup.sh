@@ -116,4 +116,19 @@ else
     git -C "$NOTES_DIR/notes" pull || echo "⚠️  Could not update notes."
 fi
 
+echo "🔤 Step 10: Syncing Fonts..."
+FONT_DIR="$HOME/.local/share/fonts"
+mkdir -p "$FONT_DIR"
+if [ -d "$DOTFILES_DIR/fonts" ]; then
+    echo " -> Copying custom fonts to $FONT_DIR/..."
+    cp -r "$DOTFILES_DIR/fonts/"* "$FONT_DIR/"
+    
+    if command -v fc-cache &> /dev/null; then
+        echo " -> 🔄 Refreshing font cache..."
+        fc-cache -f
+    fi
+else
+    echo " -> ⚠️ Warning: ~/dotfiles/fonts directory not found!"
+fi
+
 echo "✅ All sync tasks, system upgrades, and package installations complete!"
