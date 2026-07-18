@@ -53,7 +53,7 @@
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
-  "window.zoomLevel": 1.9,
+  "window.zoomLevel": 1.25,
   "workbench.editor.enablePreview": false,
   "breadcrumbs.enabled": false,
   "workbench.colorTheme": "Dark Modern",
