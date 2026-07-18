@@ -263,6 +263,16 @@ do
 
   -- NOTE: custom keyboard shortcut to close current active buffer smoothly
   vim.keymap.set('n', '<leader>bd', '<cmd>bprevious | bdelete #<CR>', { desc = '[B]uffer [D]elete' })
+
+  -- Move lines down
+  vim.keymap.set("n", "<A-j>", "<cmd>m .+1<cr>==", { desc = "Move line down" })
+  vim.keymap.set("i", "<A-j>", "<esc><cmd>m .+1<cr>==gi", { desc = "Move line down" })
+  vim.keymap.set("v", "<A-j>", ":m '>+1<cr>gv=gv", { desc = "Move selection down" })
+
+  -- Move lines up
+  vim.keymap.set("v", "<A-k>", ":m '<-2<cr>gv=gv", { desc = "Move selection up" })
+  vim.keymap.set("n", "<A-k>", "<cmd>m .-2<cr>==", { desc = "Move line up" })
+  vim.keymap.set("i", "<A-k>", "<esc><cmd>m .-2<cr>==gi", { desc = "Move line up" })
 end
 
 -- ============================================================
