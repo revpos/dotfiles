@@ -27,6 +27,14 @@ fi
 # ==============================================================================
 echo -e "\n⚙️  Step 1: Enabling Core Repositories & Upgrading System..."
 
+# Tune DNF configuration for Pacman-like speeds
+echo " -> ⚡ Optimizing DNF configuration (Parallel downloads & fastest mirrors)..."
+sudo tee -a /etc/dnf/dnf.conf > /dev/null << 'EOF'
+max_parallel_downloads=10
+fastestmirror=True
+deltarpm=False
+EOF
+
 # Ensure prerequisite CLI utilities are present
 if ! command -v git &> /dev/null; then
     echo " -> 📥 Installing Git..."
@@ -157,7 +165,7 @@ if [ -f "$PACKAGES_FILE" ]; then
     PKGS=$(sed '/^#/d; /^$/d' "$PACKAGES_FILE")
     if [ -n "$PKGS" ]; then
         echo " -> Installing: $PKGS"
-        sudo dnf install -y $PKGS
+        sudo dnf install -y --setopt=strict=0 $PKGS
     else
         echo " -> ⚠️  fedorapkgs.txt is empty."
     fi
@@ -166,20 +174,34 @@ else
 fi
 
 # ==============================================================================
-# STEP 8: Flatpak Applications (Content Creation & Primary Desktop Tools)
+# STEP 8: Flatpak Applications (Content Creation, Dev & Primary Desktop Tools)
 # ==============================================================================
 echo -e "\n📦 Step 8: Setting up Flathub and Installing Flatpak Apps..."
 
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-echo " -> Installing Flatpak stack (VSCodium, Zen Browser, OBS Studio, Kdenlive, MPV, VLC)..."
-flatpak install -y flathub \
-  com.vscodium.codium \
-  io.github.zen_browser.zen \
-  com.obsproject.Studio \
-  org.kde.kdenlive \
-  io.mpv.Mpv \
+FLATPAK_APPS=(
+  com.vscodium.codium
+  io.github.zen_browser.zen
+  com.jetbrains.IntelliJ-IDEA-Community
+  com.obsproject.Studio
+  org.kde.kdenlive
+  io.mpv.Mpv
   org.videolan.VLC
+)
+
+for app in "${FLATPAK_APPS[@]}"; do
+    echo " -> Installing $app..."
+    # Retry up to 3 times if a network timeout occurs
+    n=0
+    until [ "$n" -ge 3 ]
+    do
+       flatpak install -y flathub "$app" && break
+       n=$((n+1))
+       echo "⚠️ Download timed out for $app. Retrying ($n/3)..."
+       sleep 3
+    done
+done
 
 # ==============================================================================
 # STEP 9: Sync Wallpapers, Personal Notes & Custom Fonts
@@ -218,6 +240,26 @@ if [ -d "$DOTFILES_DIR/fonts" ]; then
     fi
 else
     echo " -> ⚠️  Warning: ~/dotfiles/fonts directory not found!"
+fi
+
+echo -e "\n🤓 Getting Nerd Fonts..."
+# Download missing Nerd Fonts directly from upstream release archives
+NERD_FONTS=("JetBrainsMono" "Meslo" "SourceCodePro")
+for font in "${NERD_FONTS[@]}"; do
+    if [ ! -d "$FONT_DIR/$font" ]; then
+        echo " -> 📥 Downloading $font Nerd Font..."
+        mkdir -p "$FONT_DIR/$font"
+        curl -sSLo "/tmp/$font.zip" "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$font.zip"
+        unzip -oq "/tmp/$font.zip" -d "$FONT_DIR/$font"
+        rm -f "/tmp/$font.zip"
+    else
+        echo " -> $font Nerd Font is already installed."
+    fi
+done
+
+if command -v fc-cache &> /dev/null; then
+    echo " -> 🔄 Refreshing font cache..."
+    fc-cache -f
 fi
 
 # ==============================================================================
