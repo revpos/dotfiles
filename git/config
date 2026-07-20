@@ -5,10 +5,9 @@
 
 [init]
     defaultBranch = main
-    templatedir = ~/.config/git/template
 
 [core]
-    editor = vim      # 'vim', 'nvim', or 'code --wait'
+    editor = nvim      # 'vim', 'nvim', or 'code --wait'
     pager = less -FRX
     # Prevents Windows CRLF line ending nightmares ('true' on Windows, 'input' on Mac/Linux)
     autocrlf = input
@@ -17,6 +16,7 @@
 
 [commit]
     verbose = true           # Include diff comment in commit message template
+	template = ~/.config/git/template
     # gpgsign = true
 
 [gpg]

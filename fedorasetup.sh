@@ -178,7 +178,7 @@ fi
 # ==============================================================================
 echo -e "\n📦 Step 8: Setting up Flathub and Installing Flatpak Apps..."
 
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 FLATPAK_APPS=(
   com.vscodium.codium
