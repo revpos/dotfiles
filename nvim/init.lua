@@ -749,8 +749,8 @@ do
   ---@type table<string, vim.lsp.Config>
   local servers = {
     clangd = {},
-    -- gopls = {},
-    -- pyright = {},
+    gopls = {},
+    pyright = {},
     ruff = {},
     -- rust_analyzer = {},
     --
