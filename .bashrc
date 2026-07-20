@@ -5,6 +5,17 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
+# User specific environment
+if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
+    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+fi
+export PATH
+
 # --- Aliases ---
 alias ..="cd .."
 alias ...="cd ../../"
@@ -22,7 +33,10 @@ alias ff="fastfetch -c examples/13.jsonc"
 alias tree="eza -T --icons"
 alias tmux="tmux -u"
 
-alias update='sudo cachyos-rate-mirrors && sudo pacman -Syu'
+# alias update='sudo cachyos-rate-mirrors && sudo pacman -Syu'
+alias update='sudo dnf upgrade --refresh && sudo fwupdmgr refresh && sudo fwupdmgr update'
+
+alias prime-run="__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia"
 
 # mkdir & cd in one step
 mkcd() {
@@ -75,4 +89,5 @@ fi
 
 # Short Shell Prompt
 PROMPT_COMMAND='PS1_CMD1=$(__git_ps1 " (%s)")';
-PS1='\[\e[34;1m\]\W\[\e[0;31m\]${PS1_CMD1}\[\e[0m\] \$ '
+# PS1='\[\e[34;1m\]\w\[\e[0;31m\]${PS1_CMD1}\[\e[0m\] \$ '  # red git prompt
+PS1='\[\e[34;1m\]\w\[\e[90m\]${PS1_CMD1}\[\e[0m\] \$ '      # grey git prompt
