@@ -31,12 +31,72 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'  # Case-insensitive completi
 # ------------------------------------------------------------------------------
 # Prompt
 # ------------------------------------------------------------------------------
-autoload -Uz vcs_info
-precmd() { vcs_info }
-zstyle ':vcs_info:git:*' formats ' (%b)'   # Show current git branch
+
+# Global variables for prompt string
+typeset -g PS_DIR=""
+typeset -g PS_GIT=""
+
+# Git prompt config
+export GIT_PS1_SHOWDIRTYSTATE=1      # Shows '*' for unstaged and '+' for staged changes
+export GIT_PS1_SHOWUNTRACKEDFILES=1  # Shows '%' for untracked files
+export GIT_PS1_SHOWUPSTREAM="auto"   # Shows '<', '>', '=', or '<>' relative to upstream
+export GIT_PS1_SHOWSTASHSTATE=1      # Shows '$' if there are stashes
+export GIT_PS1_SHOWSEPARATOR=1       # Enable separator
+export GIT_PS1_STATESEPARATOR="|"   # Space between branch name and indicators
+export GIT_PS1_HIDE_IF_PWD_IGNORED=1 # Ignores dirs in .gitignore
+export GIT_PS1_DESCRIBE_STYLE="branch"
+export GIT_PS1_SHOWCONFLICTSTATE="yes" # Unresolved conflict indicator
+
+# Load Git prompt script
+if [ -f ~/.git-prompt.sh ]; then
+  source ~/.git-prompt.sh
+fi
+
+# Helper function: sets PS_DIR directly without subshell forks
+prompt_dir() {
+  if [[ "$PWD" == "$HOME" ]]; then
+    PS_DIR="~"
+    return
+  fi
+  if [[ "$PWD" == "/" ]]; then
+    PS_DIR="/"
+    return
+  fi
+
+  local rel_path="${PWD/#$HOME/~}"
+  local -a parts
+  parts=(${(s:/:)rel_path})
+
+  # Max allowed subfolders under ~ before truncating to ../<folder>
+  local MAX_DEPTH=2
+
+  if [[ "$rel_path" == \~* ]]; then
+    if (( ${#parts} - 1 > MAX_DEPTH )); then
+      PS_DIR="../${parts[-1]}"
+    else
+      PS_DIR="$rel_path"
+    fi
+  else
+    if (( ${#parts} > MAX_DEPTH )); then
+      PS_DIR="../${parts[-1]}"
+    else
+      PS_DIR="$rel_path"
+    fi
+  fi
+}
+
+# Pre-command hook: runs in main process before each prompt render
+precmd() {
+  prompt_dir
+  if declare -f __git_ps1 >/dev/null; then
+    PS_GIT=$(__git_ps1 " (%s)")
+  else
+    PS_GIT=""
+  fi
+}
 
 setopt PROMPT_SUBST
-PROMPT='%F{cyan}%~%f%F{yellow}${vcs_info_msg_0_}%f %# '
+PROMPT='%B%F{cyan}${PS_DIR}%f%b%F{8}${PS_GIT}%f %# '
 
 # ------------------------------------------------------------------------------
 # Keybindings
@@ -107,7 +167,7 @@ alias cfg-tmux='nvim ~/.tmux.conf'
 # ------------------------------------------------------------------------------
 # Environment
 # ------------------------------------------------------------------------------
-export EDITOR='vim'                 # Default editor (change to nano/code/etc.)
+export EDITOR='nvim'                 # Default editor (change to nano/code/etc.)
 export VISUAL="$EDITOR"
 export LANG='en_US.UTF-8'
 export LC_ALL='en_US.UTF-8'
@@ -236,5 +296,5 @@ serve() {
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 
 # Starship shell prompt styling
-eval "$(starship init zsh)"
-export STARSHIP_CONFIG=~/.config/starship/starship.toml
+# eval "$(starship init zsh)"
+# export STARSHIP_CONFIG=~/.config/starship/starship.toml
