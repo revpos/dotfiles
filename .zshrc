@@ -1,15 +1,15 @@
-# ==============================================================================
-# .zshrc — Zsh Configuration
-# ==============================================================================
+# ~/.zshrc
 
 # ------------------------------------------------------------------------------
 # History
 # ------------------------------------------------------------------------------
 HISTFILE=~/.zsh_history
-# HISTFILE="$XDG_STATE_HOME/zsh/history"
 HISTSIZE=10000
 SAVEHIST=10000
-setopt HIST_IGNORE_DUPS       # Don't record duplicate commands
+setopt HIST_IGNORE_DUPS       # Don't record immediate duplicate commands
+setopt HIST_IGNORE_ALL_DUPS   # Delete old duplicate entry if new entry is added
+setopt HIST_SAVE_NO_DUPS      # Do not write duplicate events to history file
+setopt HIST_FIND_NO_DUPS      # Do not display duplicates when searching history
 setopt HIST_IGNORE_SPACE      # Don't record commands starting with a space
 setopt SHARE_HISTORY          # Share history across sessions
 setopt APPEND_HISTORY         # Append rather than overwrite history
@@ -22,17 +22,29 @@ setopt CORRECT                # Suggest corrections for mistyped commands
 setopt NO_BEEP                # No beeping
 
 # ------------------------------------------------------------------------------
-# Completion
+# Completion (Fast 24-Hour Cache + Skip Security Audit)
 # ------------------------------------------------------------------------------
-autoload -Uz compinit && compinit
+autoload -Uz compinit
+
+local zcompdump="${ZDOTDIR:-$HOME}/.zcompdump"
+
+# Enable EXTENDED_GLOB for age-matching qualifiers
+setopt EXTENDED_GLOB
+if [[ -f "$zcompdump" && -n "${zcompdump}"(#qN.mh-24) ]]; then
+  # Cache is under 24 hours old: use fast initialization (-C) and skip compaudit
+  compinit -i -C -d "$zcompdump"
+else
+  # Rebuild dump file once every 24 hours
+  compinit -i -d "$zcompdump"
+fi
+unsetopt EXTENDED_GLOB
+
 zstyle ':completion:*' menu select          # Arrow-key navigable menu
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'  # Case-insensitive completion
 
 # ------------------------------------------------------------------------------
 # Prompt
 # ------------------------------------------------------------------------------
-
-# Global variables for prompt string
 typeset -g PS_DIR=""
 typeset -g PS_GIT=""
 
@@ -52,22 +64,12 @@ if [ -f ~/.git-prompt.sh ]; then
   source ~/.git-prompt.sh
 fi
 
-# Helper function: sets PS_DIR directly without subshell forks
 prompt_dir() {
-  if [[ "$PWD" == "$HOME" ]]; then
-    PS_DIR="~"
-    return
-  fi
-  if [[ "$PWD" == "/" ]]; then
-    PS_DIR="/"
-    return
-  fi
+  if [[ "$PWD" == "$HOME" ]]; then PS_DIR="~"; return; fi
+  if [[ "$PWD" == "/" ]]; then PS_DIR="/"; return; fi
 
   local rel_path="${PWD/#$HOME/~}"
-  local -a parts
-  parts=(${(s:/:)rel_path})
-
-  # Max allowed subfolders under ~ before truncating to ../<folder>
+  local -a parts=(${(s:/:)rel_path})
   local MAX_DEPTH=2
 
   if [[ "$rel_path" == \~* ]]; then
@@ -85,10 +87,9 @@ prompt_dir() {
   fi
 }
 
-# Pre-command hook: runs in main process before each prompt render
 precmd() {
   prompt_dir
-  if declare -f __git_ps1 >/dev/null; then
+  if (( $+functions[__git_ps1] )); then
     PS_GIT=$(__git_ps1 " (%s)")
   else
     PS_GIT=""
@@ -108,42 +109,36 @@ bindkey '^[[1;5C' forward-word      # Ctrl+Right: move forward a word
 bindkey '^[[1;5D' backward-word     # Ctrl+Left: move backward a word
 
 # ------------------------------------------------------------------------------
-# Aliases — Navigation
+# Aliases — Navigation & Listing
 # ------------------------------------------------------------------------------
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 
-# ------------------------------------------------------------------------------
-# Aliases — Listing
-# ------------------------------------------------------------------------------
 alias l='ls -CF'
 alias ls='eza --color=auto'
 alias ll='eza -lh --icons --git'
 alias la='eza -lAh --icons --git'
 alias tree="eza --tree --icons"
 
-# Reuse ls completions for eza, avoids defining a separate completion function
 compdef eza=ls
 
 # ------------------------------------------------------------------------------
-# Aliases — General
+# Aliases — General & Tools
 # ------------------------------------------------------------------------------
 alias grep='grep --color=auto'
-alias mkdir='mkdir -pv'             # Create parent dirs, show what was created
-alias cp='cp -iv'                   # Interactive + verbose
-alias mv='mv -iv'                   # Interactive + verbose
-alias rm='rm -iv'                   # Interactive + verbose (prevents accidents)
-alias df='df -h'                    # Human-readable disk usage
-alias du='du -h'                    # Human-readable file sizes
+alias mkdir='mkdir -pv'
+alias cp='cp -iv'
+alias mv='mv -iv'
+alias rm='rm -iv'
+alias df='df -h'
+alias du='du -h'
 
 alias ff="fastfetch -c examples/13.jsonc"
 alias tmux="tmux -u"
 alias code="vscodium"
 
-# ------------------------------------------------------------------------------
-# Aliases — Git
-# ------------------------------------------------------------------------------
+# Git Aliases
 alias g='git'
 alias gs='git status --short'
 alias ga='git add'
@@ -153,9 +148,7 @@ alias gd='git diff'
 alias gco='git checkout'
 alias gb='git branch'
 
-# ------------------------------------------------------------------------------
-# Aliases for editing configs/dotfiles
-# ------------------------------------------------------------------------------
+# Config Editing Shortcuts
 alias cfg-bashrc='nvim ~/.bashrc'
 alias cfg-zshrc='nvim ~/.zshrc'
 alias cfg-alacritty='nvim ~/.config/alacritty/alacritty.toml'
@@ -167,29 +160,22 @@ alias cfg-tmux='nvim ~/.tmux.conf'
 # ------------------------------------------------------------------------------
 # Environment
 # ------------------------------------------------------------------------------
-export EDITOR='nvim'                 # Default editor (change to nano/code/etc.)
+export EDITOR='nvim'
 export VISUAL="$EDITOR"
 export LANG='en_US.UTF-8'
 export LC_ALL='en_US.UTF-8'
 
-# Add local bin to PATH
-export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+# Keep PATH clean and deduplicated
+typeset -U path PATH
+path=("$HOME/.local/bin" "$HOME/bin" $path)
 
 # ------------------------------------------------------------------------------
 # Functions
 # ------------------------------------------------------------------------------
-
-# Create a directory and cd into it
-mkcd() {
-  mkdir -p "$1" && cd "$1"
-}
-
-# cd and ls in one step
+mkcd() { mkdir -p "$1" && cd "$1"; }
 cl() { cd "$1" && ls; }
 
-# Scaffold a new project with a local & remote repos and an initial commit
 mkproject() {
-    # 1. Ensure a project name was provided
     if [ -z "$1" ]; then
         echo "Error: Please provide a project name."
         return 1
@@ -198,22 +184,17 @@ mkproject() {
     local PROJECT_NAME="$1"
     local TARGET_DIR="$HOME/Projects/$PROJECT_NAME"
 
-    # 2. Prevent overwriting an existing local directory
     if [ -d "$TARGET_DIR" ]; then
         echo "Error: Directory $TARGET_DIR already exists locally."
         return 1
     fi
 
     echo "🚀 Creating project '$PROJECT_NAME'..."
-
-    # 3. Create and move into the directory
     mkdir -p "$TARGET_DIR"
     cd "$TARGET_DIR" || return 1
 
-    # 4. Initialize local git repo with 'main' branch
     git init -b main
 
-    # 5. Check for or create README.md
     if [ -f "README.md" ]; then
         echo "ℹ️ Existing README.md detected. Using it for the initial commit."
     else
@@ -221,29 +202,19 @@ mkproject() {
         echo "# $PROJECT_NAME" > README.md
     fi
 
-    # 6. Stage and commit the README
     git add README.md
     git commit -m "Initial commit: Add README.md"
 
-    # 7. Create remote GitHub repo with error handling
     echo "Creating remote GitHub repository..."
-
-    # Run the creation command and capture any errors
     if ! gh repo create "$PROJECT_NAME" --private --source=. --remote=origin --push 2>/tmp/gh_err.log; then
-        echo "⚠️  GitHub repository creation failed."
-
-        # Check if the failure was specifically because it already exists
+        echo "⚠️ GitHub repository creation failed."
         if grep -q "already exists" /tmp/gh_err.log 2>/dev/null; then
-            echo "💥 It looks like the remote repository '$PROJECT_NAME' already exists on GitHub."
-
-            # Prompt the user to see if they want to link to the existing repo
+            echo "💥 Remote repository '$PROJECT_NAME' already exists on GitHub."
             read -p "Would you like to link this local repo to the existing remote and push? (y/N): " -r RESPONSE
             if [[ "$RESPONSE" =~ ^[Yy]$ ]]; then
                 echo "🔗 Linking to existing GitHub repository..."
-                # Get your GitHub username dynamically to construct the remote URL
                 local GH_USER
                 GH_USER=$(gh api user --jq .login)
-
                 git remote add origin "git@github.com:$GH_USER/$PROJECT_NAME.git"
                 git push -u origin main
                 echo "✅ Linked and pushed to existing remote!"
@@ -251,19 +222,15 @@ mkproject() {
                 echo "❌ Operation aborted. Local repo remains unlinked."
             fi
         else
-            # Print the actual error if it was something else (e.g., network issues)
             echo "Error details:"
             cat /tmp/gh_err.log
         fi
     else
         echo "✅ Project '$PROJECT_NAME' is ready and synced with GitHub!"
     fi
-
-    # Clean up temporary error log
     rm -f /tmp/gh_err.log
 }
 
-# Extract common archive formats
 extract() {
   if [ -f "$1" ]; then
     case "$1" in
@@ -285,16 +252,7 @@ extract() {
   fi
 }
 
-# Quick HTTP server in current directory
-serve() {
-  python3 -m http.server "${1:-8000}"
-}
+serve() { python3 -m http.server "${1:-8000}"; }
 
-# ------------------------------------------------------------------------------
-# Local overrides (machine-specific config, not tracked in version control)
-# ------------------------------------------------------------------------------
+# Local machine overrides
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
-
-# Starship shell prompt styling
-# eval "$(starship init zsh)"
-# export STARSHIP_CONFIG=~/.config/starship/starship.toml
