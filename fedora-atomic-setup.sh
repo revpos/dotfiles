@@ -9,8 +9,8 @@ echo "=================================================================="
 
 # Pre-flight check: Ensure user is not running as root directly
 if [ "$EUID" -eq 0 ]; then
-  echo "❌ Error: Do not run this script with 'sudo ./setup-atomic.sh'."
-  echo "   Run it as a regular user: './setup-atomic.sh'."
+  echo "❌ Error: Do not run this script with 'sudo ./fedora-atomic-setup.sh'."
+  echo "   Run it as a regular user: './fedora-atomic-setup.sh'."
   echo "   The script will prompt for sudo access when needed."
   exit 1
 fi
@@ -45,7 +45,6 @@ readonly DEV_FLATPAKS=(
 
 readonly DEV_CONTAINER_PKGS=(
   7zip
-  alacritty
   eza
   fd-find
   fzf
@@ -100,10 +99,8 @@ sudo rpm-ostree install --apply-live --idempotent -y \
   akmod-nvidia \
   xorg-x11-drv-nvidia-cuda \
   rsms-inter-fonts \
+  alacritty \
   distrobox \
-  podman \
-  git \
-  curl \
   unzip || echo "⚠️ Notice: Some ostree layers staged for next reboot."
 
 echo " -> 🔋 Configuring Lenovo Battery Conservation Service (60% Threshold)..."
@@ -137,7 +134,7 @@ flatpak install -y --or-update flathub "${DAILY_FLATPAKS[@]}" || true
 
 echo " -> Installing Multimedia Runtime Extension Codecs + Development Flatpaks (backgrounded)..."
 (
-  flatpak install -y flathub org.freedesktop.Platform.ffmpeg-full || true
+  flatpak install -y flathub org.freedesktop.Platform.ffmpeg-full//24.08 || true
   flatpak install -y --or-update flathub "${DEV_FLATPAKS[@]}" || true
 ) &
 FLATPAK_JOB_PID=$!
