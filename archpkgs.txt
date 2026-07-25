@@ -2,6 +2,7 @@
 alacritty
 eza
 fd
+fzf
 gcc
 git
 go

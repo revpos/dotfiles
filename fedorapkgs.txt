@@ -2,6 +2,7 @@
 alacritty
 eza
 fd-find
+fzf
 gcc
 git
 golang
