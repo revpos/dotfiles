@@ -78,6 +78,9 @@ readonly NERD_FONTS=("JetBrainsMono" "Meslo" "SourceCodePro" "FiraCode")
 # ==============================================================================
 echo -e "\n⚙️  Section 2: Base System Setup (rpm-ostree)..."
 
+# Pause background rpm-ostree timer to prevent lock contention
+sudo systemctl stop rpm-ostreed-automatic.timer || true
+
 echo " -> 🔄 Staging base system upgrades..."
 sudo rpm-ostree upgrade || true
 
@@ -135,23 +138,27 @@ echo -e "\n💻 Section 4: Development Setup..."
 echo " -> Installing Development Flatpaks..."
 flatpak install -y --or-update flathub "${DEV_FLATPAKS[@]}" || true
 
+echo " -> Fast-pulling base image via Podman..."
+podman pull --quiet registry.fedoraproject.org/fedora:latest || true
+
 echo " -> Setting up Distrobox dev container ('$DEV_CONTAINER_NAME')..."
 if ! distrobox list | grep -q "$DEV_CONTAINER_NAME"; then
-    distrobox create --name "$DEV_CONTAINER_NAME" --image fedora:latest --yes
+    distrobox create --name "$DEV_CONTAINER_NAME" --image registry.fedoraproject.org/fedora:latest --yes
 fi
 
 echo " -> Tuning DNF & installing CLI packages inside Distrobox..."
 distrobox enter "$DEV_CONTAINER_NAME" -- bash -c "
-  # Optimize DNF inside the container
+  # Optimize DNF inside container: parallel downloads + skip documentation
   sudo tee -a /etc/dnf/dnf.conf > /dev/null << 'EOF'
 [main]
 max_parallel_downloads=10
+tsflags=nodocs
 EOF
 
-  # Install COPR repositories and packages
-  sudo dnf copr enable atim/lazygit -y
-  sudo dnf copr enable atim/lazydocker -y
-  sudo dnf install -y ${DEV_CONTAINER_PKGS[*]}
+  # Install COPR repositories and packages with weak-deps skipped
+  sudo dnf copr enable atim/lazygit -y --quiet
+  sudo dnf copr enable atim/lazydocker -y --quiet
+  sudo dnf install -y --setopt=install_weak_deps=False ${DEV_CONTAINER_PKGS[*]}
 "
 
 echo " -> Exporting container shortcuts to host desktop..."
