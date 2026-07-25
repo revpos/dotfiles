@@ -85,11 +85,18 @@ echo " -> 🔄 Staging base system upgrades..."
 sudo rpm-ostree upgrade || true
 
 FEDORA_VER=$(rpm -E %fedora)
-echo " -> 📦 Staging NVIDIA drivers, UI fonts, container runtimes, and host tools..."
-# Combined into a single rpm-ostree commit for efficiency
-sudo rpm-ostree install --apply-live --needed -y \
+
+echo " -> 📦 Registering RPM Fusion repos (must land before NVIDIA pkgs resolve)..."
+sudo rpm-ostree install --apply-live --idempotent -y \
   "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${FEDORA_VER}.noarch.rpm" \
   "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${FEDORA_VER}.noarch.rpm" \
+  || echo "⚠️ Notice: RPM Fusion repo layer staged for next reboot."
+
+echo " -> 📦 Staging NVIDIA drivers, UI fonts, container runtimes, and host tools..."
+# Kept as a separate transaction: rpm-ostree resolves package names against
+# repo metadata that must already be registered, so bundling this with the
+# repo-release RPMs above can silently fail to find akmod-nvidia.
+sudo rpm-ostree install --apply-live --idempotent -y \
   akmod-nvidia \
   xorg-x11-drv-nvidia-cuda \
   rsms-inter-fonts \
@@ -107,7 +114,8 @@ After=multi-user.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/sh -c 'echo 1 > /sys/bus/platform/drivers/ideapad_laptop/VPC2004:00/conservation_mode 2>/dev/null || true'
+ExecStartPre=/sbin/modprobe ideapad_laptop
+ExecStart=/bin/sh -c 'for f in /sys/bus/platform/drivers/ideapad_laptop/VPC*/conservation_mode; do echo 1 > "$f"; done 2>/dev/null || true'
 
 [Install]
 WantedBy=multi-user.target
@@ -127,19 +135,24 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 echo " -> Installing Daily Driving & Media Flatpaks in parallel batch..."
 flatpak install -y --or-update flathub "${DAILY_FLATPAKS[@]}" || true
 
-echo " -> Installing Multimedia Runtime Extension Codecs..."
-flatpak install -y flathub org.freedesktop.Platform.ffmpeg-full || true
+echo " -> Installing Multimedia Runtime Extension Codecs + Development Flatpaks (backgrounded)..."
+(
+  flatpak install -y flathub org.freedesktop.Platform.ffmpeg-full || true
+  flatpak install -y --or-update flathub "${DEV_FLATPAKS[@]}" || true
+) &
+FLATPAK_JOB_PID=$!
 
 # ==============================================================================
 # SECTION 4: DEVELOPMENT SETUP (flatpak + dnf inside Distrobox)
 # ==============================================================================
 echo -e "\n💻 Section 4: Development Setup..."
 
-echo " -> Installing Development Flatpaks..."
-flatpak install -y --or-update flathub "${DEV_FLATPAKS[@]}" || true
-
-echo " -> Fast-pulling base image via Podman..."
+echo " -> Fast-pulling base image via Podman (runs concurrently with flatpak installs above)..."
 podman pull --quiet registry.fedoraproject.org/fedora:latest || true
+
+# Sync up before touching the container — distrobox-export later shares the
+# flatpak host desktop database, so keep both jobs finished before that.
+wait "$FLATPAK_JOB_PID" || true
 
 echo " -> Setting up Distrobox dev container ('$DEV_CONTAINER_NAME')..."
 if ! distrobox list | grep -q "$DEV_CONTAINER_NAME"; then
@@ -213,14 +226,17 @@ if [ -f "$DOTFILES_DIR/nvim/init.lua" ]; then
     cp "$DOTFILES_DIR/nvim/init.lua" "$CONFIG_DIR/nvim/init.lua"
 fi
 
-# Clone Notes repository directly to the root of ~/Documents
-echo " -> Syncing Personal Notes directly into ~/Documents..."
+# Clone Notes repository into its own subfolder — cloning straight into
+# ~/Documents fails as soon as that folder has anything else in it (which it
+# almost always will), and the failure is masked by `|| true` below.
+readonly NOTES_DIR="$DOCUMENTS_DIR/notes"
+echo " -> Syncing Personal Notes into ~/Documents/notes..."
 mkdir -p "$DOCUMENTS_DIR"
-if [ ! -d "$DOCUMENTS_DIR/.git" ]; then
-    git clone git@github.com:revpos/notes "$DOCUMENTS_DIR" || \
-    git clone https://github.com/revpos/notes.git "$DOCUMENTS_DIR" || true
+if [ ! -d "$NOTES_DIR/.git" ]; then
+    git clone git@github.com:revpos/notes "$NOTES_DIR" || \
+    git clone https://github.com/revpos/notes.git "$NOTES_DIR" || true
 else
-    git -C "$DOCUMENTS_DIR" pull || echo "⚠️ Could not update notes repository."
+    git -C "$NOTES_DIR" pull || echo "⚠️ Could not update notes repository."
 fi
 
 # Sync Wallpapers
@@ -245,7 +261,7 @@ for font in "${NERD_FONTS[@]}"; do
         (
             echo "    -> Downloading $font Nerd Font in background..."
             mkdir -p "$FONT_DIR/$font"
-            curl -sSLo "/tmp/$font.zip" "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$font.zip"
+            curl -fsSLo "/tmp/$font.zip" "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$font.zip"
             unzip -oq "/tmp/$font.zip" -d "$FONT_DIR/$font"
             rm -f "/tmp/$font.zip"
         ) &
