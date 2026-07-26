@@ -181,13 +181,16 @@ echo -e "\n📦 Step 8: Setting up Flathub and Installing Flatpak Apps..."
 sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 FLATPAK_APPS=(
-  com.vscodium.codium
-  io.github.zen_browser.zen
-  com.jetbrains.IntelliJ-IDEA-Community
-  com.obsproject.Studio
-  org.kde.kdenlive
+  com.brave.Browser
   io.mpv.Mpv
   org.videolan.VLC
+  org.qbittorrent.qBittorrent
+  org.localsend.localsend_app
+  com.vscodium.codium
+  com.obsproject.Studio
+  org.kde.kdenlive
+  org.gimp.GIMP
+  dev.storyapps.starc
 )
 
 for app in "${FLATPAK_APPS[@]}"; do
@@ -244,7 +247,7 @@ fi
 
 echo -e "\n🤓 Getting Nerd Fonts..."
 # Download missing Nerd Fonts directly from upstream release archives
-NERD_FONTS=("JetBrainsMono" "Meslo" "SourceCodePro")
+NERD_FONTS=("JetBrainsMono" "Meslo" "SourceCodePro" "FiraCode")
 for font in "${NERD_FONTS[@]}"; do
     if [ ! -d "$FONT_DIR/$font" ]; then
         echo " -> 📥 Downloading $font Nerd Font..."
